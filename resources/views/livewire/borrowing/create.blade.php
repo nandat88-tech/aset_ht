@@ -58,6 +58,8 @@ new class extends Component
 
     public function submit(): void
     {
+        $locationId = Employee::find($this->employee_id)?->location_id;
+
         $borrow = BorrowTransaction::create([
             'employee_id' => $this->employee_id,
             'borrow_date' => now(),
@@ -68,12 +70,12 @@ new class extends Component
 
         foreach ($this->selectedHt as $htId) {
             BorrowItem::create(['borrow_transaction_id' => $borrow->id, 'handy_talky_id' => $htId]);
-            HandyTalky::where('id', $htId)->update(['status' => 'borrowed']);
+            HandyTalky::where('id', $htId)->update(['status' => 'borrowed', 'location_id' => $locationId]);
         }
 
         foreach ($this->selectedCharger as $chargerId) {
             BorrowItem::create(['borrow_transaction_id' => $borrow->id, 'charger_id' => $chargerId]);
-            Charger::where('id', $chargerId)->update(['status' => 'borrowed']);
+            Charger::where('id', $chargerId)->update(['status' => 'borrowed', 'location_id' => $locationId]);
         }
 
         session()->flash('message', 'Peminjaman berhasil dicatat.');
