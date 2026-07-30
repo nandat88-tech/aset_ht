@@ -39,6 +39,11 @@ new class extends Component
                     {{ request()->routeIs('handy-talky.index') ? 'bg-primary-light text-primary font-semibold' : 'hover:bg-white/10' }}">
                 Handy Talky
             </a>
+            <a href="{{ route('handy-talky.import') }}" wire:navigate
+    class="flex items-center gap-3 pl-8 pr-3 py-1.5 rounded-control text-xs
+        {{ request()->routeIs('handy-talky.import') ? 'bg-primary-light text-primary font-semibold' : 'hover:bg-white/10 text-sidebar-text/70' }}">
+    ↳ Import Excel
+</a>
             <a href="{{ route('chargers.index') }}" wire:navigate
     class="flex items-center gap-3 px-3 py-2 rounded-control text-sm
         {{ request()->routeIs('chargers.index') ? 'bg-primary-light text-primary font-semibold' : 'hover:bg-white/10' }}">
@@ -63,7 +68,11 @@ new class extends Component
         {{ request()->routeIs('borrowing.index') ? 'bg-primary-light text-primary font-semibold' : 'hover:bg-white/10' }}">
     Borrowing
 </a>
-            <a href="#" class="flex items-center gap-3 px-3 py-2 rounded-control text-sm hover:bg-white/10">Returning</a>
+            <a href="{{ route('returning.index') }}" wire:navigate
+    class="flex items-center gap-3 px-3 py-2 rounded-control text-sm
+        {{ request()->routeIs('returning.*') ? 'bg-primary-light text-primary font-semibold' : 'hover:bg-white/10' }}">
+    Returning
+</a>
         </div>
 
         <div>
