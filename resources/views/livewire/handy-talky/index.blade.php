@@ -84,6 +84,18 @@ new class extends Component
 
     $this->showModal = false;
 }
+public function markAsRepaired(int $id): void
+{
+    $diskominfo = \App\Models\Location::firstOrCreate(['name' => 'DISKOMINFO']);
+
+    \App\Models\HandyTalky::where('id', $id)->update([
+        'condition' => 'good',
+        'status' => 'available',
+        'location_id' => $diskominfo->id,
+    ]);
+
+    session()->flash('message', 'Unit berhasil diperbarui menjadi tersedia kembali.');
+}
 }; ?>
 
 <div>
@@ -131,6 +143,13 @@ new class extends Component
                         </td>
                         <td class="px-4 py-3">
                             <button wire:click="edit({{ $ht->id }})" class="text-primary hover:underline">Edit</button>
+                            @if (in_array($ht->status, ['damaged', 'under_repair']))
+                                <button wire:click="markAsRepaired({{ $ht->id }})"
+                                    wire:confirm="Yakin unit ini sudah selesai diperbaiki dan siap dipakai kembali?"
+                                    class="text-success hover:underline ml-3">
+                                    Selesai Diperbaiki
+                                </button>
+                            @endif
                         </td>
                     </tr>
                 @empty

@@ -10,11 +10,12 @@ class ReturnItem extends Model
     use HasFactory;
 
     protected $fillable = [
-        'return_transaction_id',
-        'handy_talky_id',
-        'charger_id',
-        'condition',
-    ];
+    'return_transaction_id',
+    'handy_talky_id',
+    'charger_id',
+    'condition',
+    'condition_note',
+];
 
     public function returnTransaction()
     {

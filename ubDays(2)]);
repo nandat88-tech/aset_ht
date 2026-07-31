@@ -1,0 +1,14 @@
+[90m= [39m[34;4mApp\Models\BorrowTransaction[39;24m {#8481
+    [34mid[39m: [35m7[39m,
+    [34memployee_id[39m: [35m2[39m,
+    [34mdestination_location_id[39m: [35m16[39m,
+    [34mborrow_date[39m: [32m"[39m[32m2026-07-31 07:21:31[39m[32m"[39m,
+    [34mdue_date[39m: [32m"[39m[32m2026-08-01[39m[32m"[39m,
+    [34mnotes[39m: [32m"[39m[32mdisetujui[39m[32m"[39m,
+    [34mpurpose[39m: [32m"[39m[32muda uni sawahlunto[39m[32m"[39m,
+    [34mdocument_url[39m: [36mnull[39m,
+    [34mstatus[39m: [32m"[39m[32mreturned[39m[32m"[39m,
+    [34mlast_reminder_sent_at[39m: [36mnull[39m,
+    [34mcreated_at[39m: [32m"[39m[32m2026-07-31 07:21:31[39m[32m"[39m,
+    [34mupdated_at[39m: [32m"[39m[32m2026-07-31 07:23:22[39m[32m"[39m,
+  }

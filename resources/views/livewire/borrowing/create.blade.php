@@ -14,6 +14,8 @@ new class extends Component
     // Step 1
     public ?int $employee_id = null;
     public string $due_date = '';
+    public ?int $destination_location_id = null;
+    public string $purpose = '';
 
     // Step 2
     public array $selectedHt = [];
@@ -23,23 +25,25 @@ new class extends Component
     public string $notes = '';
 
     public function with(): array
-    {
-        return [
-            'employees' => Employee::orderBy('name')->get(),
-            'availableHt' => HandyTalky::where('status', 'available')->orderBy('serial_number')->get(),
-            'availableChargers' => Charger::where('status', 'available')->orderBy('serial_number')->get(),
-        ];
-    }
+{
+    return [
+        'employees' => Employee::orderBy('name')->get(),
+        'availableHt' => HandyTalky::where('status', 'available')->orderBy('serial_number')->get(),
+        'availableChargers' => Charger::where('status', 'available')->orderBy('serial_number')->get(),
+        'locations' => \App\Models\Location::orderBy('name')->get(),
+    ];
+}
 
     public function goToStep2(): void
-    {
-        $this->validate([
-            'employee_id' => 'required|exists:employees,id',
-            'due_date' => 'required|date|after_or_equal:today',
-        ]);
+{
+    $this->validate([
+        'employee_id' => 'required|exists:employees,id',
+        'due_date' => 'required|date|after_or_equal:today',
+        'destination_location_id' => 'required|exists:locations,id',
+    ]);
 
-        $this->step = 2;
-    }
+    $this->step = 2;
+}
 
     public function goToStep3(): void
     {
@@ -57,31 +61,34 @@ new class extends Component
     }
 
     public function submit(): void
-    {
-        $locationId = Employee::find($this->employee_id)?->location_id;
+{
+    $borrow = BorrowTransaction::create([
+        'employee_id' => $this->employee_id,
+        'destination_location_id' => $this->destination_location_id,
+        'borrow_date' => now(),
+        'due_date' => $this->due_date,
+        'notes' => $this->notes,
+        'purpose' => $this->purpose,
+        'status' => 'active',
+    ]);
 
-        $borrow = BorrowTransaction::create([
-            'employee_id' => $this->employee_id,
-            'borrow_date' => now(),
-            'due_date' => $this->due_date,
-            'notes' => $this->notes,
-            'status' => 'active',
+    foreach ($this->selectedHt as $htId) {
+        BorrowItem::create(['borrow_transaction_id' => $borrow->id, 'handy_talky_id' => $htId]);
+        HandyTalky::where('id', $htId)->update([
+            'status' => 'borrowed',
+            'location_id' => $this->destination_location_id,
         ]);
-
-        foreach ($this->selectedHt as $htId) {
-            BorrowItem::create(['borrow_transaction_id' => $borrow->id, 'handy_talky_id' => $htId]);
-            HandyTalky::where('id', $htId)->update(['status' => 'borrowed', 'location_id' => $locationId]);
-        }
-
-        foreach ($this->selectedCharger as $chargerId) {
-            BorrowItem::create(['borrow_transaction_id' => $borrow->id, 'charger_id' => $chargerId]);
-            Charger::where('id', $chargerId)->update(['status' => 'borrowed', 'location_id' => $locationId]);
-        }
-
-        session()->flash('message', 'Peminjaman berhasil dicatat.');
-        $this->reset(['step', 'employee_id', 'due_date', 'selectedHt', 'selectedCharger', 'notes']);
-        $this->step = 1;
     }
+
+    foreach ($this->selectedCharger as $chargerId) {
+        BorrowItem::create(['borrow_transaction_id' => $borrow->id, 'charger_id' => $chargerId]);
+        Charger::where('id', $chargerId)->update(['status' => 'borrowed']);
+    }
+
+    session()->flash('message', 'Peminjaman berhasil dicatat.');
+    $this->reset(['step', 'employee_id', 'due_date', 'destination_location_id', 'purpose', 'selectedHt', 'selectedCharger', 'notes']);
+    $this->step = 1;
+}
 }; ?>
 
 <div class="max-w-2xl mx-auto">
@@ -114,23 +121,42 @@ new class extends Component
             <h2 class="text-lg font-semibold mb-4">1. Borrower Info</h2>
 
             <div class="space-y-4">
-                <div>
-                    <x-input-label for="employee_id" value="Peminjam" />
-                    <select id="employee_id" wire:model="employee_id" class="mt-1 block w-full rounded-control border-border text-sm">
-                        <option value="">-- Pilih Pegawai --</option>
-                        @foreach ($employees as $employee)
-                            <option value="{{ $employee->id }}">{{ $employee->name }} ({{ $employee->department }})</option>
-                        @endforeach
-                    </select>
-                    <x-input-error :messages="$errors->get('employee_id')" class="mt-1" />
-                </div>
+    <div>
+        <x-input-label for="employee_id" value="Peminjam" />
+        <select id="employee_id" wire:model="employee_id" class="mt-1 block w-full rounded-control border-border text-sm">
+            <option value="">-- Pilih Pegawai --</option>
+            @foreach ($employees as $employee)
+                <option value="{{ $employee->id }}">{{ $employee->name }} ({{ $employee->department }})</option>
+            @endforeach
+        </select>
+        <x-input-error :messages="$errors->get('employee_id')" class="mt-1" />
+    </div>
 
-                <div>
-                    <x-input-label for="due_date" value="Rencana Tanggal Kembali" />
-                    <input type="date" id="due_date" wire:model="due_date" class="mt-1 block w-full rounded-control border-border text-sm">
-                    <x-input-error :messages="$errors->get('due_date')" class="mt-1" />
-                </div>
-            </div>
+    <div>
+        <x-input-label for="destination_location_id" value="Lokasi Tujuan (OPD/Unit Penerima)" />
+        <select id="destination_location_id" wire:model="destination_location_id" class="mt-1 block w-full rounded-control border-border text-sm">
+            <option value="">-- Pilih Lokasi Tujuan --</option>
+            @foreach ($locations as $location)
+                <option value="{{ $location->id }}">{{ $location->name }}</option>
+            @endforeach
+        </select>
+        <x-input-error :messages="$errors->get('destination_location_id')" class="mt-1" />
+        <p class="text-xs text-text-secondary mt-1">
+            Kalau lokasi belum ada di daftar, tambahkan dulu lewat menu Master Data → Locations.
+        </p>
+    </div>
+
+    <div>
+        <x-input-label for="due_date" value="Rencana Tanggal Kembali" />
+        <input type="date" id="due_date" wire:model="due_date" class="mt-1 block w-full rounded-control border-border text-sm">
+        <x-input-error :messages="$errors->get('due_date')" class="mt-1" />
+    </div>
+
+    <div>
+        <x-input-label for="purpose" value="Keperluan / Tujuan Peminjaman" />
+        <input type="text" id="purpose" wire:model="purpose" placeholder="Contoh: Kegiatan lapangan, siaga bencana, dll" class="mt-1 block w-full rounded-control border-border text-sm">
+    </div>
+</div>
 
             <div class="mt-6 flex justify-end">
                 <button wire:click="goToStep2" class="px-4 py-2 rounded-control text-sm bg-primary text-white hover:bg-primary-dark">

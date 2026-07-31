@@ -13,6 +13,7 @@ new class extends Component
     public int $transactionId;
 
     public array $conditions = [];
+    public array $conditionNotes = [];
     public string $notes = '';
 
     public function mount(int $transactionId): void
@@ -51,32 +52,42 @@ new class extends Component
         ]);
 
         foreach ($transaction->items as $item) {
-            $condition = $this->conditions[$item->id] ?? 'good';
+    $condition = $this->conditions[$item->id] ?? 'good';
+    $conditionNote = $this->conditionNotes[$item->id] ?? '';
 
-            ReturnItem::create([
-                'return_transaction_id' => $returnTransaction->id,
-                'handy_talky_id' => $item->handy_talky_id,
-                'charger_id' => $item->charger_id,
-                'condition' => $condition,
-            ]);
+    // Kalau rusak/perlu perbaikan, otomatis catat asal-usul peminjamannya untuk akuntabilitas
+    if ($condition !== 'good') {
+        $traceInfo = "Terjadi saat dipinjam oleh {$transaction->employee->name} ({$transaction->employee->department}), dipinjamkan ke lokasi: " . ($transaction->destinationLocation->name ?? '-') . ".";
+        $conditionNote = trim($conditionNote . ' ' . $traceInfo);
+    }
+
+    ReturnItem::create([
+        'return_transaction_id' => $returnTransaction->id,
+        'handy_talky_id' => $item->handy_talky_id,
+        'charger_id' => $item->charger_id,
+        'condition' => $condition,
+        'condition_note' => $conditionNote ?: null,
+    ]);
 
             // Update status & lokasi aset sesuai kondisi
-            $newStatus = $condition === 'good' ? 'available' : $condition;
+            // Lokasi selalu kembali ke DISKOMINFO (secara fisik unit sudah diterima kembali),
+            // hanya status yang mengikuti kondisi (baik/rusak/perlu perbaikan)
+                $newStatus = $condition === 'good' ? 'available' : $condition;
 
-            if ($item->handy_talky_id) {
+                if ($item->handy_talky_id) {
                 $item->handyTalky->update([
-                    'condition' => $condition,
-                    'status' => $newStatus,
-                    'location_id' => $condition === 'good' ? $diskominfo->id : $item->handyTalky->location_id,
-                ]);
-            }
+                'condition' => $condition,
+                'status' => $newStatus,
+                'location_id' => $diskominfo->id,
+            ]);
+    }
 
-            if ($item->charger_id) {
-                $item->charger->update([
-                    'condition' => $condition,
-                    'status' => $newStatus,
-                ]);
-            }
+if ($item->charger_id) {
+    $item->charger->update([
+        'condition' => $condition,
+        'status' => $newStatus,
+    ]);
+}
         }
 
         $transaction->update([
@@ -108,16 +119,24 @@ new class extends Component
                     </p>
 
                     <div class="flex gap-4 text-sm">
-                        <label class="flex items-center gap-1">
-                            <input type="radio" wire:model="conditions.{{ $item->id }}" value="good"> Baik
-                        </label>
-                        <label class="flex items-center gap-1">
-                            <input type="radio" wire:model="conditions.{{ $item->id }}" value="damaged"> Rusak
-                        </label>
-                        <label class="flex items-center gap-1">
-                            <input type="radio" wire:model="conditions.{{ $item->id }}" value="under_repair"> Perlu Perbaikan
-                        </label>
-                    </div>
+    <label class="flex items-center gap-1">
+        <input type="radio" wire:model.live="conditions.{{ $item->id }}" value="good"> Baik
+    </label>
+    <label class="flex items-center gap-1">
+        <input type="radio" wire:model.live="conditions.{{ $item->id }}" value="damaged"> Rusak
+    </label>
+    <label class="flex items-center gap-1">
+        <input type="radio" wire:model.live="conditions.{{ $item->id }}" value="under_repair"> Perlu Perbaikan
+    </label>
+</div>
+
+@if (($conditions[$item->id] ?? 'good') !== 'good')
+    <div class="mt-2">
+        <input type="text" wire:model="conditionNotes.{{ $item->id }}"
+            placeholder="Detail kerusakan (contoh: layar retak, tidak menyala, dll)"
+            class="block w-full rounded-control border-border text-xs">
+    </div>
+@endif
                 </div>
             @endforeach
         </div>

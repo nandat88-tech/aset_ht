@@ -1,0 +1,7 @@
+[90m= [39m[34;4mApp\Models\Location[39;24m {#8944
+    [34mid[39m: [35m8[39m,
+    [34mname[39m: [32m"[39m[32mDISKOMINFO[39m[32m"[39m,
+    [34mdescription[39m: [36mnull[39m,
+    [34mcreated_at[39m: [32m"[39m[32m2026-07-30 01:34:49[39m[32m"[39m,
+    [34mupdated_at[39m: [32m"[39m[32m2026-07-30 01:34:49[39m[32m"[39m,
+  }

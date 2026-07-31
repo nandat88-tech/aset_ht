@@ -20,6 +20,10 @@ Route::middleware(['auth'])->group(function () {
     Route::get('returning/{transactionId}/process', function (int $transactionId) {
         return view('returning-process', ['transactionId' => $transactionId]);
     })->name('returning.process');
+    Route::view('late-returns', 'late-returns')->name('late-returns.index');
+    Route::view('reports', 'reports')->name('reports.index');
+Route::get('reports/export/pdf', [\App\Http\Controllers\ReportExportController::class, 'pdf'])->name('reports.export-pdf');
+Route::get('reports/export/excel', [\App\Http\Controllers\ReportExportController::class, 'excel'])->name('reports.export-excel');
 });
 
 require __DIR__.'/auth.php';

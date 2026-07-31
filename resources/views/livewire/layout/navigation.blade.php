@@ -73,11 +73,20 @@ new class extends Component
         {{ request()->routeIs('returning.*') ? 'bg-primary-light text-primary font-semibold' : 'hover:bg-white/10' }}">
     Returning
 </a>
+        <a href="{{ route('late-returns.index') }}" wire:navigate
+        class="flex items-center gap-3 px-3 py-2 rounded-control text-sm
+            {{ request()->routeIs('late-returns.index') ? 'bg-primary-light text-primary font-semibold' : 'hover:bg-white/10' }}">
+        Late Returns
+        </a>
         </div>
 
         <div>
             <p class="px-3 text-xs uppercase tracking-wide text-sidebar-text/50 mb-2">Reports</p>
-            <a href="#" class="flex items-center gap-3 px-3 py-2 rounded-control text-sm hover:bg-white/10">Laporan</a>
+            <a href="{{ route('reports.index') }}" wire:navigate
+                class="flex items-center gap-3 px-3 py-2 rounded-control text-sm
+                    {{ request()->routeIs('reports.index') ? 'bg-primary-light text-primary font-semibold' : 'hover:bg-white/10' }}">
+                Laporan
+            </a>
         </div>
 
         <div>

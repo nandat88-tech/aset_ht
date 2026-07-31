@@ -106,7 +106,7 @@ new class extends Component
 <div class="mt-6 grid grid-cols-1 lg:grid-cols-2 gap-4">
 <div class="bg-card rounded-card shadow-card p-4">
     <h3 class="text-sm font-semibold text-text-primary mb-3">Kondisi Handy Talky</h3>
-    <div class="max-w-xs mx-auto" style="height: 220px;" wire:ignore
+    <div class="max-w-xs mx-auto" style="height: 220px;" wire:ignore wire:key="chart-kondisi-{{ $htGood }}-{{ $htConditionDamaged }}"
         x-data="{
             chart: null,
             init() {
@@ -129,8 +129,8 @@ new class extends Component
 
 <div class="bg-card rounded-card shadow-card p-4">
     <h3 class="text-sm font-semibold text-text-primary mb-3">Distribusi HT per Lokasi</h3>
-    <div style="height: 220px;" wire:ignore
-    x-data='{
+    <div style="height: 220px;" wire:ignore wire:key="chart-lokasi-{{ $locationCounts->sum() }}-{{ $locationLabels->count() }}"
+         x-data='{
         chart: null,
         init() {
             this.chart = new Chart(this.$refs.barCanvas, {
