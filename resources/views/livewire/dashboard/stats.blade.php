@@ -47,7 +47,7 @@ new class extends Component
 
     <div class="bg-card rounded-card shadow-card p-4 flex items-center justify-between">
         <div>
-            <p class="text-text-secondary text-xs font-medium mb-1">HT Available</p>
+            <p class="text-text-secondary text-xs font-medium mb-1">HT Tersedia</p>
             <p class="text-2xl font-bold text-text-primary">{{ $htTersedia }}</p>
         </div>
         <div class="h-10 w-10 rounded-full flex items-center justify-center bg-green-100 text-success">✅</div>
@@ -55,7 +55,7 @@ new class extends Component
 
     <div class="bg-card rounded-card shadow-card p-4 flex items-center justify-between">
         <div>
-            <p class="text-text-secondary text-xs font-medium mb-1">HT Borrowed</p>
+            <p class="text-text-secondary text-xs font-medium mb-1">HT Dipinjam</p>
             <p class="text-2xl font-bold text-text-primary">{{ $htDipinjam }}</p>
         </div>
         <div class="h-10 w-10 rounded-full flex items-center justify-center bg-blue-100 text-info">🤝</div>
@@ -63,7 +63,7 @@ new class extends Component
 
     <div class="bg-card rounded-card shadow-card p-4 flex items-center justify-between">
         <div>
-            <p class="text-text-secondary text-xs font-medium mb-1">HT Under Repair</p>
+            <p class="text-text-secondary text-xs font-medium mb-1">HT Perlu Perbaikan</p>
             <p class="text-2xl font-bold text-text-primary">{{ $htPerluPerbaikan }}</p>
         </div>
         <div class="h-10 w-10 rounded-full flex items-center justify-center bg-amber-100 text-warning">🔧</div>
@@ -71,7 +71,7 @@ new class extends Component
 
     <div class="bg-card rounded-card shadow-card p-4 flex items-center justify-between">
         <div>
-            <p class="text-text-secondary text-xs font-medium mb-1">HT Damaged</p>
+            <p class="text-text-secondary text-xs font-medium mb-1">HT Rusak</p>
             <p class="text-2xl font-bold text-text-primary">{{ $htRusak }}</p>
         </div>
         <div class="h-10 w-10 rounded-full flex items-center justify-center bg-red-100 text-danger">⚠️</div>
@@ -87,7 +87,7 @@ new class extends Component
 
     <div class="bg-card rounded-card shadow-card p-4 flex items-center justify-between">
         <div>
-            <p class="text-text-secondary text-xs font-medium mb-1">Charger Available</p>
+            <p class="text-text-secondary text-xs font-medium mb-1">Charger Tersedia</p>
             <p class="text-2xl font-bold text-text-primary">{{ $chargerTersedia }}</p>
         </div>
         <div class="h-10 w-10 rounded-full flex items-center justify-center bg-green-100 text-success">✅</div>
@@ -95,7 +95,7 @@ new class extends Component
 
     <div class="bg-card rounded-card shadow-card p-4 flex items-center justify-between">
         <div>
-            <p class="text-text-secondary text-xs font-medium mb-1">Late Returns</p>
+            <p class="text-text-secondary text-xs font-medium mb-1">Keterlambatan</p>
             <p class="text-2xl font-bold text-text-primary">{{ $Keterlambatan }}</p>
         </div>
         <div class="h-10 w-10 rounded-full flex items-center justify-center bg-red-100 text-danger">⏰</div>

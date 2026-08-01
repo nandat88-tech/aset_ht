@@ -52,12 +52,12 @@ new class extends Component
             <a href="{{ route('locations.index') }}" wire:navigate
     class="flex items-center gap-3 px-3 py-2 rounded-control text-sm
         {{ request()->routeIs('locations.index') ? 'bg-primary-light text-primary font-semibold' : 'hover:bg-white/10' }}">
-    Locations
+    Lokasi
 </a>
             <a href="{{ route('employees.index') }}" wire:navigate
     class="flex items-center gap-3 px-3 py-2 rounded-control text-sm
         {{ request()->routeIs('employees.index') ? 'bg-primary-light text-primary font-semibold' : 'hover:bg-white/10' }}">
-    Employees
+    Pegawai
 </a>
         </div>
 
@@ -66,17 +66,17 @@ new class extends Component
             <a href="{{ route('borrowing.index') }}" wire:navigate
     class="flex items-center gap-3 px-3 py-2 rounded-control text-sm
         {{ request()->routeIs('borrowing.index') ? 'bg-primary-light text-primary font-semibold' : 'hover:bg-white/10' }}">
-    Borrowing
+    Peminjaman
 </a>
             <a href="{{ route('returning.index') }}" wire:navigate
     class="flex items-center gap-3 px-3 py-2 rounded-control text-sm
         {{ request()->routeIs('returning.*') ? 'bg-primary-light text-primary font-semibold' : 'hover:bg-white/10' }}">
-    Returning
+    Pengembalian
 </a>
         <a href="{{ route('late-returns.index') }}" wire:navigate
         class="flex items-center gap-3 px-3 py-2 rounded-control text-sm
             {{ request()->routeIs('late-returns.index') ? 'bg-primary-light text-primary font-semibold' : 'hover:bg-white/10' }}">
-        Late Returns
+        Keterlambatan
         </a>
         </div>
 

@@ -116,7 +116,7 @@ new class extends Component
 
     <!-- Stepper -->
     <div class="flex items-center justify-center mb-8">
-        @foreach (['Borrower Info', 'Select Assets', 'Terms & Upload'] as $index => $label)
+        @foreach (['Info Peminjam', 'Pilih Aset', 'Syarat & Upload'] as $index => $label)
             @php $num = $index + 1; @endphp
             <div class="flex items-center">
                 <div class="h-8 w-8 rounded-full flex items-center justify-center text-sm font-semibold
@@ -134,7 +134,7 @@ new class extends Component
     <div class="bg-card rounded-card shadow-card p-6">
         <!-- STEP 1 -->
         @if ($step === 1)
-            <h2 class="text-lg font-semibold mb-4">1. Borrower Info</h2>
+            <h2 class="text-lg font-semibold mb-4">1. Info Peminjam</h2>
 
             <div class="space-y-4">
     <div>
@@ -197,7 +197,7 @@ new class extends Component
 
         <!-- STEP 2 -->
         @if ($step === 2)
-            <h2 class="text-lg font-semibold mb-4">2. Select Assets</h2>
+            <h2 class="text-lg font-semibold mb-4">2. Pilih Aset</h2>
 
             <x-input-error :messages="$errors->get('selection')" class="mb-3" />
 
@@ -237,7 +237,7 @@ new class extends Component
 
         <!-- STEP 3 -->
         @if ($step === 3)
-            <h2 class="text-lg font-semibold mb-4">3. Terms & Confirmation</h2>
+            <h2 class="text-lg font-semibold mb-4">3. Syarat & Konfirmasi</h2>
 
             <div>
                 <x-input-label for="notes" value="Catatan (opsional)" />

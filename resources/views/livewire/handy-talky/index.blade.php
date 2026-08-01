@@ -109,7 +109,7 @@ public function markAsRepaired(int $id): void
         <input
             type="text"
             wire:model.live.debounce.300ms="search"
-            placeholder="Cari serial number, brand..."
+            placeholder="Cari nomor seri, merk..."
             class="w-72 rounded-control border-border text-sm"
         >
         <button wire:click="openModal" class="bg-primary text-white text-sm px-4 py-2 rounded-control hover:bg-primary-dark">
@@ -121,9 +121,9 @@ public function markAsRepaired(int $id): void
         <table class="w-full text-sm">
             <thead class="bg-gray-50 text-text-secondary uppercase text-xs">
                 <tr>
-                    <th class="text-left px-4 py-3">Serial Number</th>
-                    <th class="text-left px-4 py-3">Inventory Number</th>
-                    <th class="text-left px-4 py-3">Brand / Model</th>
+                    <th class="text-left px-4 py-3">Nomor Seri</th>
+                    <th class="text-left px-4 py-3">Nomor Inventaris</th>
+                    <th class="text-left px-4 py-3">Merk / Model</th>
                     <th class="text-left px-4 py-3">Lokasi</th>
                     <th class="text-left px-4 py-3">Status</th>
                     <th class="text-left px-4 py-3">Aksi</th>
@@ -184,13 +184,13 @@ public function markAsRepaired(int $id): void
 
                 <div class="space-y-4">
                     <div>
-                        <x-input-label for="serial_number" value="Serial Number" />
+                        <x-input-label for="serial_number" value="Nomor Seri" />
                         <x-text-input id="serial_number" wire:model="serial_number" class="mt-1 block w-full" />
                         <x-input-error :messages="$errors->get('serial_number')" class="mt-1" />
                     </div>
 
                     <div>
-                        <x-input-label for="inventory_number" value="Inventory Number" />
+                        <x-input-label for="inventory_number" value="Nomor Inventaris" />
                         <x-text-input id="inventory_number" wire:model="inventory_number" class="mt-1 block w-full" />
                         <x-input-error :messages="$errors->get('inventory_number')" class="mt-1" />
                     </div>
