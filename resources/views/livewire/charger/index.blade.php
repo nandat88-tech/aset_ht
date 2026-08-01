@@ -105,7 +105,13 @@ new class extends Component
                         <td class="px-4 py-3">{{ $charger->handyTalky?->serial_number ?? '-' }}</td>
                         <td class="px-4 py-3">
                             <span class="badge badge-{{ $charger->status === 'available' ? 'success' : ($charger->status === 'borrowed' ? 'info' : 'danger') }}">
-                                {{ ucfirst($charger->status) }}
+                                {{ match($charger->status) {
+                                    'available' => 'Tersedia',
+                                    'borrowed' => 'Dipinjam',
+                                    'damaged' => 'Rusak',
+                                    'under_repair' => 'Perlu Perbaikan',
+                                    default => $charger->status,
+                                } }}
                             </span>
                         </td>
                         <td class="px-4 py-3">

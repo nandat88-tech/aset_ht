@@ -12,6 +12,7 @@ class Employee extends Model
     protected $fillable = [
         'name',
         'department',
+        'phone',
     ];
 
     public function borrowTransactions()

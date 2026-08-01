@@ -6,9 +6,12 @@ use App\Models\Charger;
 use App\Models\BorrowTransaction;
 use App\Models\BorrowItem;
 use Livewire\Volt\Component;
+use Livewire\WithFileUploads;
 
 new class extends Component
 {
+    use WithFileUploads;
+
     public int $step = 1;
 
     // Step 1
@@ -16,6 +19,7 @@ new class extends Component
     public string $due_date = '';
     public ?int $destination_location_id = null;
     public string $purpose = '';
+    public string $loan_type = 'sementara';
 
     // Step 2
     public array $selectedHt = [];
@@ -23,6 +27,7 @@ new class extends Component
 
     // Step 3
     public string $notes = '';
+    public $document = null;
 
     public function with(): array
 {
@@ -38,8 +43,8 @@ new class extends Component
 {
     $this->validate([
         'employee_id' => 'required|exists:employees,id',
-        'due_date' => 'required|date|after_or_equal:today',
         'destination_location_id' => 'required|exists:locations,id',
+        'due_date' => $this->loan_type === 'sementara' ? 'required|date|after_or_equal:today' : 'nullable',
     ]);
 
     $this->step = 2;
@@ -62,13 +67,24 @@ new class extends Component
 
     public function submit(): void
 {
+    $this->validate([
+        'document' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:5120',
+    ]);
+    
+    $documentPath = null;
+    if ($this->document) {
+        $documentPath = $this->document->store('borrow-documents', 'public');
+    }
+
     $borrow = BorrowTransaction::create([
         'employee_id' => $this->employee_id,
         'destination_location_id' => $this->destination_location_id,
+        'loan_type' => $this->loan_type,
         'borrow_date' => now(),
-        'due_date' => $this->due_date,
+        'due_date' => $this->loan_type === 'sementara' ? $this->due_date : null,
         'notes' => $this->notes,
         'purpose' => $this->purpose,
+        'document_url' => $documentPath,
         'status' => 'active',
     ]);
 
@@ -86,7 +102,7 @@ new class extends Component
     }
 
     session()->flash('message', 'Peminjaman berhasil dicatat.');
-    $this->reset(['step', 'employee_id', 'due_date', 'destination_location_id', 'purpose', 'selectedHt', 'selectedCharger', 'notes']);
+    $this->reset(['step', 'employee_id', 'due_date', 'destination_location_id', 'purpose', 'loan_type', 'selectedHt', 'selectedCharger', 'notes', 'document']);;
     $this->step = 1;
 }
 }; ?>
@@ -147,10 +163,24 @@ new class extends Component
     </div>
 
     <div>
+        <x-input-label value="Jenis Peminjaman" />
+        <div class="flex gap-4 mt-1 text-sm">
+            <label class="flex items-center gap-1">
+                <input type="radio" wire:model.live="loan_type" value="sementara"> Sementara (ada tenggat, mis. event)
+            </label>
+            <label class="flex items-center gap-1">
+                <input type="radio" wire:model.live="loan_type" value="tetap"> Tetap / Stand-by (tanpa tenggat)
+            </label>
+        </div>
+    </div>
+
+@if ($loan_type === 'sementara')
+    <div>
         <x-input-label for="due_date" value="Rencana Tanggal Kembali" />
         <input type="date" id="due_date" wire:model="due_date" class="mt-1 block w-full rounded-control border-border text-sm">
         <x-input-error :messages="$errors->get('due_date')" class="mt-1" />
     </div>
+@endif
 
     <div>
         <x-input-label for="purpose" value="Keperluan / Tujuan Peminjaman" />
@@ -212,6 +242,13 @@ new class extends Component
             <div>
                 <x-input-label for="notes" value="Catatan (opsional)" />
                 <textarea id="notes" wire:model="notes" rows="3" class="mt-1 block w-full rounded-control border-border text-sm" placeholder="Contoh: Untuk kegiatan lapangan"></textarea>
+            </div>
+                    <div class="mt-4">
+                <x-input-label for="document" value="Upload Surat Permohonan Peminjaman (opsional)" />
+                <input type="file" id="document" wire:model="document" accept=".pdf,.jpg,.jpeg,.png" class="mt-1 block w-full text-sm border border-border rounded-control p-2">
+                <x-input-error :messages="$errors->get('document')" class="mt-1" />
+                <div wire:loading wire:target="document" class="text-xs text-text-secondary mt-1">Mengunggah file...</div>
+                <p class="text-xs text-text-secondary mt-1">Format PDF/JPG/PNG, maksimal 5MB.</p>
             </div>
 
             <div class="mt-4 bg-gray-50 rounded-control p-4 text-sm">

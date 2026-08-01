@@ -35,12 +35,12 @@ new class extends Component
             </thead>
             <tbody class="divide-y divide-border">
                 @forelse ($transactions as $trx)
-                    @php $isLate = \Carbon\Carbon::parse($trx->due_date)->isPast(); @endphp
+                    @php $isLate = $trx->due_date && \Carbon\Carbon::parse($trx->due_date)->isPast(); @endphp
                     <tr>
                         <td class="px-4 py-3 font-medium">{{ $trx->employee->name }}</td>
                         <td class="px-4 py-3">{{ $trx->employee->department }}</td>
                         <td class="px-4 py-3">{{ \Carbon\Carbon::parse($trx->borrow_date)->format('d M Y') }}</td>
-                        <td class="px-4 py-3">{{ \Carbon\Carbon::parse($trx->due_date)->format('d M Y') }}</td>
+                        <td class="px-4 py-3">{{ $trx->due_date ? \Carbon\Carbon::parse($trx->due_date)->format('d M Y') : 'Tanpa batas (Tetap)' }}</td>
                         <td class="px-4 py-3">{{ $trx->items->count() }} unit</td>
                         <td class="px-4 py-3">
                             <span class="badge {{ $isLate ? 'badge-danger' : 'badge-info' }}">

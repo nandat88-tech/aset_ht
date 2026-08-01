@@ -13,6 +13,7 @@ new class extends Component
         return [
             'transactions' => BorrowTransaction::with('employee', 'destinationLocation', 'items')
                 ->where('status', 'active')
+                ->where('loan_type', 'sementara')
                 ->whereDate('due_date', '<', now())
                 ->orderBy('due_date')
                 ->paginate(10),

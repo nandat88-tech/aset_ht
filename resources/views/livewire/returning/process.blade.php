@@ -6,15 +6,19 @@ use App\Models\ReturnTransaction;
 use App\Models\ReturnItem;
 use Livewire\Volt\Component;
 use Livewire\Attributes\Locked;
+use Livewire\WithFileUploads;
 
 new class extends Component
 {
+    use WithFileUploads;
+
     #[Locked]
     public int $transactionId;
 
     public array $conditions = [];
     public array $conditionNotes = [];
     public string $notes = '';
+    public $documentation = null;
 
     public function mount(int $transactionId): void
     {
@@ -38,18 +42,28 @@ new class extends Component
 
     public function submit(): void
     {
+        $this->validate([
+        'documentation' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:5120',
+    ]);
+
         $transaction = BorrowTransaction::with('items')->findOrFail($this->transactionId);
 
         $diskominfo = Location::firstOrCreate(['name' => 'DISKOMINFO']);
 
         $isLate = \Carbon\Carbon::parse($transaction->due_date)->isPast();
 
-        $returnTransaction = ReturnTransaction::create([
-            'borrow_transaction_id' => $transaction->id,
-            'return_date' => now(),
-            'notes' => $this->notes,
-            'is_late' => $isLate,
-        ]);
+        $documentationPath = null;
+if ($this->documentation) {
+    $documentationPath = $this->documentation->store('return-documents', 'public');
+}
+
+$returnTransaction = ReturnTransaction::create([
+    'borrow_transaction_id' => $transaction->id,
+    'return_date' => now(),
+    'notes' => $this->notes,
+    'documentation_url' => $documentationPath,
+    'is_late' => $isLate,
+]);
 
         foreach ($transaction->items as $item) {
     $condition = $this->conditions[$item->id] ?? 'good';
@@ -142,9 +156,17 @@ if ($item->charger_id) {
         </div>
 
         <div>
-            <x-input-label for="notes" value="Catatan (opsional)" />
-            <textarea id="notes" wire:model="notes" rows="3" class="mt-1 block w-full rounded-control border-border text-sm"></textarea>
-        </div>
+    <x-input-label for="notes" value="Catatan (opsional)" />
+    <textarea id="notes" wire:model="notes" rows="3" class="mt-1 block w-full rounded-control border-border text-sm"></textarea>
+</div>
+
+<div class="mt-4">
+    <x-input-label for="documentation" value="Upload Berita Acara Serah Terima (opsional)" />
+    <input type="file" id="documentation" wire:model="documentation" accept=".pdf,.jpg,.jpeg,.png" class="mt-1 block w-full text-sm border border-border rounded-control p-2">
+    <x-input-error :messages="$errors->get('documentation')" class="mt-1" />
+    <div wire:loading wire:target="documentation" class="text-xs text-text-secondary mt-1">Mengunggah file...</div>
+    <p class="text-xs text-text-secondary mt-1">Format PDF/JPG/PNG, maksimal 5MB.</p>
+</div>
 
         <div class="mt-6 flex justify-between">
             <a href="{{ route('returning.index') }}" wire:navigate class="px-4 py-2 rounded-control text-sm border border-border hover:bg-gray-50">

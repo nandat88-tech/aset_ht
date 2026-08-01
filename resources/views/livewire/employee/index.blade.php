@@ -14,6 +14,7 @@ new class extends Component
 
     public string $name = '';
     public string $department = '';
+    public string $phone = '';
 
     public function with(): array
     {
@@ -30,7 +31,7 @@ new class extends Component
 
     public function openModal(): void
     {
-        $this->reset(['name', 'department', 'editingId']);
+        $this->reset(['name', 'department', 'phone', 'editingId']);
         $this->showModal = true;
     }
 
@@ -45,6 +46,7 @@ new class extends Component
         $this->editingId = $employee->id;
         $this->name = $employee->name;
         $this->department = $employee->department;
+        $this->phone = $employee->phone ?? '';
         $this->showModal = true;
     }
 
@@ -53,6 +55,7 @@ new class extends Component
         $validated = $this->validate([
             'name' => 'required|string',
             'department' => 'required|string',
+            'phone' => 'nullable|string|max:20',
         ]);
 
         if ($this->editingId) {
@@ -87,6 +90,7 @@ new class extends Component
                 <tr>
                     <th class="text-left px-4 py-3">Nama</th>
                     <th class="text-left px-4 py-3">OPD / Departemen</th>
+                    <th class="text-left px-4 py-3">No. HP/WA</th>
                     <th class="text-left px-4 py-3">Aksi</th>
                 </tr>
             </thead>
@@ -95,13 +99,14 @@ new class extends Component
                     <tr>
                         <td class="px-4 py-3 font-medium">{{ $employee->name }}</td>
                         <td class="px-4 py-3">{{ $employee->department }}</td>
+                        <td class="px-4 py-3">{{ $employee->phone ?? '-' }}</td>
                         <td class="px-4 py-3">
                             <button wire:click="edit({{ $employee->id }})" class="text-primary hover:underline">Edit</button>
                         </td>
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="3" class="px-4 py-6 text-center text-text-secondary">Belum ada data pegawai.</td>
+                        <td colspan="4" class="px-4 py-6 text-center text-text-secondary">Belum ada data pegawai.</td>
                     </tr>
                 @endforelse
             </tbody>
@@ -128,6 +133,10 @@ new class extends Component
                             <x-input-label for="department" value="OPD / Departemen" />
                             <x-text-input id="department" wire:model="department" class="mt-1 block w-full" />
                             <x-input-error :messages="$errors->get('department')" class="mt-1" />
+                        </div>
+                        <div>
+                            <x-input-label for="phone" value="No. HP/WA (opsional)" />
+                            <x-text-input id="phone" wire:model="phone" placeholder="Contoh: 081234567890" class="mt-1 block w-full" />
                         </div>
                     </div>
 

@@ -18,6 +18,7 @@ class BorrowTransaction extends Model
         'purpose',
         'document_url',
         'status',
+        'loan_type',
     ];
 
     protected $casts = [

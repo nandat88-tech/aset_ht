@@ -36,4 +36,8 @@ class HandyTalky extends Model
     {
         return $this->hasMany(Charger::class);
     }
+    public function borrowItems()
+    {
+        return $this->hasMany(BorrowItem::class);
+    }
 }

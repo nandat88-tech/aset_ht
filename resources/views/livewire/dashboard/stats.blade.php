@@ -11,14 +11,14 @@ new class extends Component
     {
         return [
             'totalHt' => HandyTalky::count(),
-            'htAvailable' => HandyTalky::where('status', 'available')->count(),
-            'htBorrowed' => HandyTalky::where('status', 'borrowed')->count(),
-            'htUnderRepair' => HandyTalky::where('status', 'under_repair')->count(),
-            'htDamaged' => HandyTalky::where('status', 'damaged')->count(),
+            'htTersedia' => HandyTalky::where('status', 'available')->count(),
+            'htDipinjam' => HandyTalky::where('status', 'borrowed')->count(),
+            'htPerluPerbaikan' => HandyTalky::where('status', 'under_repair')->count(),
+            'htRusak' => HandyTalky::where('status', 'damaged')->count(),
             'totalCharger' => Charger::count(),
-            'chargerAvailable' => Charger::where('status', 'available')->count(),
-            'chargerDamaged' => Charger::where('status', 'damaged')->count(),
-            'lateReturns' => BorrowTransaction::where('status', 'active')
+            'chargerTersedia' => Charger::where('status', 'available')->count(),
+            'chargerRusak' => Charger::where('status', 'damaged')->count(),
+            'Keterlambatan' => BorrowTransaction::where('status', 'active')
                 ->where('due_date', '<', now())
                 ->count(),
             'htGood' => HandyTalky::where('condition', 'good')->count(),
@@ -48,7 +48,7 @@ new class extends Component
     <div class="bg-card rounded-card shadow-card p-4 flex items-center justify-between">
         <div>
             <p class="text-text-secondary text-xs font-medium mb-1">HT Available</p>
-            <p class="text-2xl font-bold text-text-primary">{{ $htAvailable }}</p>
+            <p class="text-2xl font-bold text-text-primary">{{ $htTersedia }}</p>
         </div>
         <div class="h-10 w-10 rounded-full flex items-center justify-center bg-green-100 text-success">✅</div>
     </div>
@@ -56,7 +56,7 @@ new class extends Component
     <div class="bg-card rounded-card shadow-card p-4 flex items-center justify-between">
         <div>
             <p class="text-text-secondary text-xs font-medium mb-1">HT Borrowed</p>
-            <p class="text-2xl font-bold text-text-primary">{{ $htBorrowed }}</p>
+            <p class="text-2xl font-bold text-text-primary">{{ $htDipinjam }}</p>
         </div>
         <div class="h-10 w-10 rounded-full flex items-center justify-center bg-blue-100 text-info">🤝</div>
     </div>
@@ -64,7 +64,7 @@ new class extends Component
     <div class="bg-card rounded-card shadow-card p-4 flex items-center justify-between">
         <div>
             <p class="text-text-secondary text-xs font-medium mb-1">HT Under Repair</p>
-            <p class="text-2xl font-bold text-text-primary">{{ $htUnderRepair }}</p>
+            <p class="text-2xl font-bold text-text-primary">{{ $htPerluPerbaikan }}</p>
         </div>
         <div class="h-10 w-10 rounded-full flex items-center justify-center bg-amber-100 text-warning">🔧</div>
     </div>
@@ -72,7 +72,7 @@ new class extends Component
     <div class="bg-card rounded-card shadow-card p-4 flex items-center justify-between">
         <div>
             <p class="text-text-secondary text-xs font-medium mb-1">HT Damaged</p>
-            <p class="text-2xl font-bold text-text-primary">{{ $htDamaged }}</p>
+            <p class="text-2xl font-bold text-text-primary">{{ $htRusak }}</p>
         </div>
         <div class="h-10 w-10 rounded-full flex items-center justify-center bg-red-100 text-danger">⚠️</div>
     </div>
@@ -88,7 +88,7 @@ new class extends Component
     <div class="bg-card rounded-card shadow-card p-4 flex items-center justify-between">
         <div>
             <p class="text-text-secondary text-xs font-medium mb-1">Charger Available</p>
-            <p class="text-2xl font-bold text-text-primary">{{ $chargerAvailable }}</p>
+            <p class="text-2xl font-bold text-text-primary">{{ $chargerTersedia }}</p>
         </div>
         <div class="h-10 w-10 rounded-full flex items-center justify-center bg-green-100 text-success">✅</div>
     </div>
@@ -96,7 +96,7 @@ new class extends Component
     <div class="bg-card rounded-card shadow-card p-4 flex items-center justify-between">
         <div>
             <p class="text-text-secondary text-xs font-medium mb-1">Late Returns</p>
-            <p class="text-2xl font-bold text-text-primary">{{ $lateReturns }}</p>
+            <p class="text-2xl font-bold text-text-primary">{{ $Keterlambatan }}</p>
         </div>
         <div class="h-10 w-10 rounded-full flex items-center justify-center bg-red-100 text-danger">⏰</div>
     </div>

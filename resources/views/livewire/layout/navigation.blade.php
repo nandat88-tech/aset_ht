@@ -42,7 +42,7 @@ new class extends Component
             <a href="{{ route('handy-talky.import') }}" wire:navigate
     class="flex items-center gap-3 pl-8 pr-3 py-1.5 rounded-control text-xs
         {{ request()->routeIs('handy-talky.import') ? 'bg-primary-light text-primary font-semibold' : 'hover:bg-white/10 text-sidebar-text/70' }}">
-    ↳ Import Excel
+    ↳ Impor Excel
 </a>
             <a href="{{ route('chargers.index') }}" wire:navigate
     class="flex items-center gap-3 px-3 py-2 rounded-control text-sm
@@ -91,8 +91,8 @@ new class extends Component
 
         <div>
             <p class="px-3 text-xs uppercase tracking-wide text-sidebar-text/50 mb-2">Administration</p>
-            <a href="#" class="flex items-center gap-3 px-3 py-2 rounded-control text-sm hover:bg-white/10">Users</a>
-            <a href="{{ route('profile') }}" wire:navigate class="flex items-center gap-3 px-3 py-2 rounded-control text-sm hover:bg-white/10">Profile</a>
+            <a href="#" class="flex items-center gap-3 px-3 py-2 rounded-control text-sm hover:bg-white/10">Pengguna</a>
+            <a href="{{ route('profile') }}" wire:navigate class="flex items-center gap-3 px-3 py-2 rounded-control text-sm hover:bg-white/10">Profil</a>
         </div>
     </nav>
 
@@ -100,7 +100,7 @@ new class extends Component
     <div class="px-3 py-4 border-t border-white/10">
         <div class="px-3 mb-2 text-sm text-white">{{ auth()->user()->name }}</div>
         <button wire:click="logout" class="w-full text-left px-3 py-2 rounded-control text-sm text-red-300 hover:bg-white/10">
-            Log Out
+            Keluar
         </button>
     </div>
 </aside>

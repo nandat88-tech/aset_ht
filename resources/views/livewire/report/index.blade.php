@@ -2,6 +2,7 @@
 
 use App\Models\BorrowTransaction;
 use App\Models\Location;
+use Illuminate\Support\Facades\Storage;
 use Livewire\Volt\Component;
 use Livewire\WithPagination;
 
@@ -132,6 +133,7 @@ new class extends Component
                     <th class="text-left px-4 py-3">Jatuh Tempo</th>
                     <th class="text-left px-4 py-3">Jumlah Unit</th>
                     <th class="text-left px-4 py-3">Status</th>
+                    <th class="text-left px-4 py-3">Dokumen</th>
                 </tr>
             </thead>
             <tbody class="divide-y divide-border">
@@ -148,6 +150,17 @@ new class extends Component
                             <span class="badge {{ $trx->status === 'active' ? 'badge-info' : ($trx->status === 'returned_late' ? 'badge-danger' : 'badge-success') }}">
                                 {{ ['active' => 'Dipinjam', 'returned' => 'Selesai', 'returned_late' => 'Terlambat'][$trx->status] ?? $trx->status }}
                             </span>
+                        </td>
+                        <td class="px-4 py-3 text-xs">
+                            @if ($trx->document_url)
+                                <a href="{{ Storage::url($trx->document_url) }}" target="_blank" class="text-primary hover:underline block">Surat Permohonan</a>
+                            @endif
+                            @if ($trx->returnTransaction?->documentation_url)
+                                <a href="{{ Storage::url($trx->returnTransaction->documentation_url) }}" target="_blank" class="text-primary hover:underline block">Berita Acara</a>
+                            @endif
+                            @if (!$trx->document_url && !$trx->returnTransaction?->documentation_url)
+                                <span class="text-text-secondary">-</span>
+                            @endif
                         </td>
                     </tr>
                 @empty
