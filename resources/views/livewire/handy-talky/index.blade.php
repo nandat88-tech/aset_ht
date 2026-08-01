@@ -138,7 +138,13 @@ public function markAsRepaired(int $id): void
                         <td class="px-4 py-3">{{ $ht->location?->name ?? '-' }}</td>
                         <td class="px-4 py-3">
                             <span class="badge badge-{{ $ht->status === 'available' ? 'success' : ($ht->status === 'borrowed' ? 'info' : 'danger') }}">
-                                {{ ucfirst($ht->status) }}
+                                {{ match($ht->status) {
+                                    'available' => 'Tersedia',
+                                    'borrowed' => 'Dipinjam',
+                                    'damaged' => 'Rusak',
+                                    'under_repair' => 'Perlu Perbaikan',
+                                    default => $ht->status,
+                                } }}
                             </span>
                         </td>
                         <td class="px-4 py-3">
