@@ -33,17 +33,21 @@ new class extends Component
         </div>
 
         <div>
-            <p class="px-3 text-xs uppercase tracking-wide text-sidebar-text/50 mb-2">Master Data</p>
-            <a href="{{ route('handy-talky.index') }}" wire:navigate
-                class="flex items-center gap-3 px-3 py-2 rounded-control text-sm
-                    {{ request()->routeIs('handy-talky.index') ? 'bg-primary-light text-primary font-semibold' : 'hover:bg-white/10' }}">
-                Handy Talky
-            </a>
-            <a href="{{ route('handy-talky.import') }}" wire:navigate
-    class="flex items-center gap-3 pl-8 pr-3 py-1.5 rounded-control text-xs
-        {{ request()->routeIs('handy-talky.import') ? 'bg-primary-light text-primary font-semibold' : 'hover:bg-white/10 text-sidebar-text/70' }}">
-    ↳ Impor Excel
-</a>
+    <p class="px-3 text-xs uppercase tracking-wide text-sidebar-text/50 mb-2">Master Data</p>
+
+    <a href="{{ route('handy-talky.index') }}" wire:navigate
+        class="flex items-center gap-3 px-3 py-2 rounded-control text-sm
+            {{ request()->routeIs('handy-talky.index') ? 'bg-primary-light text-primary font-semibold' : 'hover:bg-white/10'}}">
+        Handy Talky
+    </a>
+
+    @if (!auth()->user()->isViewer())
+
+    <a href="{{ route('handy-talky.import') }}" wire:navigate
+        class="flex items-center gap-3 pl-8 pr-3 py-1.5 rounded-control text-xs
+            {{ request()->routeIs('handy-talky.import') ? 'bg-primary-light text-primary font-semibold' : 'hover:bg-white/10 text-sidebar-text/70' }}">
+        ↳ Impor Excel
+    </a>
             <a href="{{ route('chargers.index') }}" wire:navigate
     class="flex items-center gap-3 px-3 py-2 rounded-control text-sm
         {{ request()->routeIs('chargers.index') ? 'bg-primary-light text-primary font-semibold' : 'hover:bg-white/10' }}">
@@ -59,9 +63,12 @@ new class extends Component
         {{ request()->routeIs('employees.index') ? 'bg-primary-light text-primary font-semibold' : 'hover:bg-white/10' }}">
     Pegawai
 </a>
+@endif
         </div>
 
         <div>
+            @if (!auth()->user()->isViewer())
+
             <p class="px-3 text-xs uppercase tracking-wide text-sidebar-text/50 mb-2">Transaksi</p>
             <a href="{{ route('borrowing.index') }}" wire:navigate
     class="flex items-center gap-3 px-3 py-2 rounded-control text-sm
@@ -74,11 +81,14 @@ new class extends Component
     Pengembalian
 </a>
         <a href="{{ route('late-returns.index') }}" wire:navigate
-        class="flex items-center gap-3 px-3 py-2 rounded-control text-sm
-            {{ request()->routeIs('late-returns.index') ? 'bg-primary-light text-primary font-semibold' : 'hover:bg-white/10' }}">
-        Keterlambatan
-        </a>
-        </div>
+    class="flex items-center gap-3 px-3 py-2 rounded-control text-sm
+        {{ request()->routeIs('late-returns.index') ? 'bg-primary-light text-primary font-semibold' : 'hover:bg-white/10' }}">
+    Keterlambatan
+</a>
+
+@endif
+
+</div>
 
         <div>
             <p class="px-3 text-xs uppercase tracking-wide text-sidebar-text/50 mb-2">Reports</p>
@@ -91,7 +101,13 @@ new class extends Component
 
         <div>
             <p class="px-3 text-xs uppercase tracking-wide text-sidebar-text/50 mb-2">Administration</p>
-            <a href="#" class="flex items-center gap-3 px-3 py-2 rounded-control text-sm hover:bg-white/10">Pengguna</a>
+            @if (auth()->user()->isAdmin())
+    <a href="{{ route('users.index') }}" wire:navigate
+        class="flex items-center gap-3 px-3 py-2 rounded-control text-sm
+            {{ request()->routeIs('users.index') ? 'bg-primary-light text-primary font-semibold' : 'hover:bg-white/10' }}">
+        Pengguna
+    </a>
+@endif
             <a href="{{ route('profile') }}" wire:navigate class="flex items-center gap-3 px-3 py-2 rounded-control text-sm hover:bg-white/10">Profil</a>
         </div>
     </nav>

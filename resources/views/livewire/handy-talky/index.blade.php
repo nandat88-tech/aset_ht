@@ -112,9 +112,11 @@ public function markAsRepaired(int $id): void
             placeholder="Cari nomor seri, merk..."
             class="w-72 rounded-control border-border text-sm"
         >
-        <button wire:click="openModal" class="bg-primary text-white text-sm px-4 py-2 rounded-control hover:bg-primary-dark">
-            + Tambah Data
-        </button>
+        @if (!auth()->user()->isViewer())
+    <button wire:click="openModal" class="bg-primary text-white text-sm px-4 py-2 rounded-control hover:bg-primary-dark">
+        + Tambah Data
+    </button>
+@endif
     </div>
 
     <div class="bg-card rounded-card shadow-card overflow-hidden">
