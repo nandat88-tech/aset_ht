@@ -107,6 +107,7 @@ new class extends Component
         </div>
     </div>
 
+    @if (auth()->user()->isAdmin())
     <!-- Tombol Export -->
     <div class="flex justify-end gap-3 mb-4">
         <a href="{{ route('reports.export-pdf', ['year' => $year, 'month' => $month, 'location' => $locationFilter]) }}"
@@ -119,6 +120,7 @@ new class extends Component
             Export Excel
         </a>
     </div>
+@endif
 
     <!-- Tabel -->
     <div class="bg-card rounded-card shadow-card overflow-hidden">

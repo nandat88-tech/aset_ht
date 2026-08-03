@@ -39,12 +39,16 @@ new class extends Component
 
     public function openModal(): void
 {
+    abort_unless(auth()->user()->canEditData(), 403, 'Anda tidak memiliki akses untuk menambah data.');
+
     $this->reset(['serial_number', 'inventory_number', 'brand', 'model', 'frequency', 'location_id', 'editingId']);
     $this->showModal = true;
 }
 
     public function edit(int $id): void
     {
+        abort_unless(auth()->user()->canEditData(), 403, 'Anda tidak memiliki akses untuk mengedit data.');
+
         $ht = HandyTalky::findOrFail($id);
 
         $this->editingId = $ht->id;
@@ -65,6 +69,8 @@ new class extends Component
 
     public function save(): void
 {
+    abort_unless(auth()->user()->canEditData(), 403, 'Anda tidak memiliki akses untuk menyimpan data.');
+
     $validated = $this->validate([
         'serial_number' => 'required|string|unique:handy_talkies,serial_number,' . $this->editingId,
         'inventory_number' => 'required|string|unique:handy_talkies,inventory_number,' . $this->editingId,
@@ -86,6 +92,8 @@ new class extends Component
 }
 public function markAsRepaired(int $id): void
 {
+    abort_unless(auth()->user()->canEditData(), 403, 'Anda tidak memiliki akses untuk mengubah status.');
+
     $diskominfo = \App\Models\Location::firstOrCreate(['name' => 'DISKOMINFO']);
 
     \App\Models\HandyTalky::where('id', $id)->update([
@@ -113,9 +121,11 @@ public function markAsRepaired(int $id): void
             class="w-72 rounded-control border-border text-sm"
         >
         @if (!auth()->user()->isViewer())
+    @if (auth()->user()->canEditData())
     <button wire:click="openModal" class="bg-primary text-white text-sm px-4 py-2 rounded-control hover:bg-primary-dark">
         + Tambah Data
     </button>
+@endif
 @endif
     </div>
 
@@ -150,6 +160,7 @@ public function markAsRepaired(int $id): void
                             </span>
                         </td>
                         <td class="px-4 py-3">
+                        @if (auth()->user()->canEditData())
                             <button wire:click="edit({{ $ht->id }})" class="text-primary hover:underline">Edit</button>
                             @if (in_array($ht->status, ['damaged', 'under_repair']))
                                 <button wire:click="markAsRepaired({{ $ht->id }})"
@@ -158,7 +169,10 @@ public function markAsRepaired(int $id): void
                                     Selesai Diperbaiki
                                 </button>
                             @endif
-                        </td>
+    @else
+        <span class="text-text-secondary text-xs">Lihat saja</span>
+    @endif
+</td>
                     </tr>
                 @empty
                     <tr>
