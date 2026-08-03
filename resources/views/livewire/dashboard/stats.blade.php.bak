@@ -3,7 +3,6 @@
 use App\Models\HandyTalky;
 use App\Models\Charger;
 use App\Models\BorrowTransaction;
-use App\Models\ReturnTransaction;
 use Livewire\Volt\Component;
 
 new class extends Component
@@ -32,46 +31,7 @@ new class extends Component
                 ->groupBy(fn ($ht) => $ht->location?->name ?? 'Tanpa Lokasi')
                 ->map->count()
                 ->values(),
-            'recentActivities' => $this->getRecentActivities(),
         ];
-    }
-
-    private function getRecentActivities()
-    {
-        $borrows = BorrowTransaction::with('employee')
-            ->latest('borrow_date')
-            ->take(5)
-            ->get()
-            ->map(function ($trx) {
-                return [
-                    'type' => 'borrow',
-                    'label' => 'Peminjaman',
-                    'employee' => $trx->employee?->name ?? '-',
-                    'date' => $trx->borrow_date,
-                    'icon' => '🤝',
-                    'color' => 'text-info',
-                ];
-            });
-
-        $returns = ReturnTransaction::with('borrowTransaction.employee')
-            ->latest('return_date')
-            ->take(5)
-            ->get()
-            ->map(function ($trx) {
-                return [
-                    'type' => 'return',
-                    'label' => 'Pengembalian',
-                    'employee' => $trx->borrowTransaction?->employee?->name ?? '-',
-                    'date' => $trx->return_date,
-                    'icon' => '📦',
-                    'color' => 'text-success',
-                ];
-            });
-
-        return $borrows->concat($returns)
-            ->sortByDesc('date')
-            ->take(6)
-            ->values();
     }
 }; ?>
 
@@ -142,7 +102,7 @@ new class extends Component
     </div>
 </div>
 
-<!-- Baris 1: Kondisi HT & Aktivitas Terbaru -->
+<!-- Grafik Kondisi HT & Distribusi Lokasi -->
 <div class="mt-6 grid grid-cols-1 lg:grid-cols-2 gap-4">
 <div class="bg-card rounded-card shadow-card p-4">
     <h3 class="text-sm font-semibold text-text-primary mb-3">Kondisi Handy Talky</h3>
@@ -168,32 +128,6 @@ new class extends Component
 </div>
 
 <div class="bg-card rounded-card shadow-card p-4">
-    <h3 class="text-sm font-semibold text-text-primary mb-3">Aktivitas Terbaru</h3>
-    <div class="space-y-3" style="height: 220px; overflow-y: auto;">
-        @forelse ($recentActivities as $activity)
-            <div class="flex items-center gap-3 pb-2 border-b border-gray-100 last:border-0">
-                <div class="h-8 w-8 rounded-full flex items-center justify-center bg-gray-100 {{ $activity['color'] }} text-sm shrink-0">
-                    {{ $activity['icon'] }}
-                </div>
-                <div class="flex-1 min-w-0">
-                    <p class="text-xs font-medium text-text-primary truncate">
-                        {{ $activity['label'] }} — {{ $activity['employee'] }}
-                    </p>
-                    <p class="text-xs text-text-secondary">
-                        {{ \Carbon\Carbon::parse($activity['date'])->translatedFormat('d M Y, H:i') }}
-                    </p>
-                </div>
-            </div>
-        @empty
-            <p class="text-xs text-text-secondary text-center mt-8">Belum ada aktivitas.</p>
-        @endforelse
-    </div>
-</div>
-</div>
-
-<!-- Baris 2: Distribusi HT per Lokasi & Status HT -->
-<div class="mt-4 grid grid-cols-1 lg:grid-cols-2 gap-4">
-<div class="bg-card rounded-card shadow-card p-4">
     <h3 class="text-sm font-semibold text-text-primary mb-3">Distribusi HT per Lokasi</h3>
     <div style="height: 220px;" wire:ignore wire:key="chart-lokasi-{{ $locationCounts->sum() }}-{{ $locationLabels->count() }}"
          x-data='{
@@ -218,30 +152,6 @@ new class extends Component
         }
     }'>
     <canvas x-ref="barCanvas"></canvas>
-</div>
-</div>
-
-<div class="bg-card rounded-card shadow-card p-4">
-    <h3 class="text-sm font-semibold text-text-primary mb-3">Status Handy Talky</h3>
-    <div class="max-w-xs mx-auto" style="height: 220px;" wire:ignore wire:key="chart-status-{{ $htTersedia }}-{{ $htDipinjam }}-{{ $htPerluPerbaikan }}-{{ $htRusak }}"
-        x-data="{
-            chart: null,
-            init() {
-                this.chart = new Chart(this.$refs.statusCanvas, {
-                    type: 'doughnut',
-                    data: {
-                        labels: ['Tersedia', 'Dipinjam', 'Perlu Perbaikan', 'Rusak'],
-                        datasets: [{
-                            data: [{{ $htTersedia }}, {{ $htDipinjam }}, {{ $htPerluPerbaikan }}, {{ $htRusak }}],
-                            backgroundColor: ['#16A34A', '#2563EB', '#D97706', '#DC2626'],
-                        }]
-                    },
-                    options: { responsive: true, maintainAspectRatio: false }
-                });
-            }
-        }">
-       <canvas x-ref="statusCanvas"></canvas>
-    </div>
 </div>
 </div>
 </div>
