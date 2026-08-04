@@ -22,11 +22,68 @@ new class extends Component
 
     public function sendReminder(int $id): void
     {
-        BorrowTransaction::where('id', $id)->update([
-            'last_reminder_sent_at' => now(),
-        ]);
+        $trx = BorrowTransaction::findOrFail($id);
+        $name = ucfirst($trx->employee->name);
+        $phone = (string) ($trx->employee->phone ?? '');
 
-        session()->flash('message', 'Reminder tercatat berhasil dikirim.');
+        // Normalize phone: remove non-digits and ensure country code (62) for Indonesia
+        $phone = preg_replace('/[^0-9]/', '', $phone);
+        if ($phone === '') {
+            session()->flash('error', 'Nomor telepon peminjam tidak tersedia. Tidak dapat mengirim reminder.');
+            return;
+        }
+        if (str_starts_with($phone, '0')) {
+            $phone = '62' . substr($phone, 1);
+        }
+
+        $dueDate = \Carbon\Carbon::parse($trx->due_date)->format('d M Y');
+        $message = "Halo $name, ini adalah pengingat bahwa Anda memiliki peminjaman yang sudah melewati tanggal jatuh tempo ($dueDate). Mohon segera mengembalikan barang yang dipinjam. Terima kasih.";
+
+        // Kirim pesan WhatsApp menggunakan API
+        $sent = $this->sendWhatsAppMessage($phone, $message);
+        
+        if ($sent) {
+            BorrowTransaction::where('id', $id)->update(['last_reminder_sent_at' => now()]);
+            session()->flash('message', 'Reminder tercatat berhasil dikirim.');
+        }
+    }
+
+    public function sendWhatsAppMessage(string $phone, string $message): bool
+    {
+        // Implementasi pengiriman pesan WhatsApp menggunakan API
+        // Contoh: Menggunakan Guzzle untuk mengirim permintaan ke API WhatsApp
+        $client = new \GuzzleHttp\Client();
+        $apiUrl = rtrim(env('WHATSAPP_API_URL', ''), '/') . '/api/sendText';
+        $apiKey = env('WHATSAPP_API_KEY', '');
+
+        try {
+            $headers = ['Content-Type' => 'application/json'];
+            if ($apiKey) {
+                $headers['X-API-KEY'] = $apiKey;
+            }
+
+            $response = $client->post($apiUrl, [
+                'headers' => $headers,
+                'json' => [
+                    'chatId' => $phone,
+                    'id' => uniqid('', true),
+                    'text' => $message,
+                    'session' => 'default',
+                ],
+                'timeout' => 10,
+            ]);
+
+            $status = $response->getStatusCode();
+            if ($status >= 200 && $status < 300) {
+                return true;
+            }
+            throw new \Exception('Gagal mengirim pesan WhatsApp. Response status: ' . $status);
+        } catch (\Exception $e) {
+            // Tangani kesalahan pengiriman pesan
+            logger()->error('WhatsApp send error: ' . $e->getMessage());
+            session()->flash('error', 'Terjadi kesalahan saat mengirim pesan WhatsApp.');
+            return false;
+        }
     }
 }; ?>
 

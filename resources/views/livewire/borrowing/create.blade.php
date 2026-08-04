@@ -22,11 +22,6 @@ new class extends Component
     public string $purpose = '';
     public string $loan_type = 'sementara';
 
-    public function mount(): void
-    {
-        $this->borrow_date = now()->format('Y-m-d');
-    }
-
     // Step 2
     public array $selectedHt = [];
     public array $selectedCharger = [];
@@ -34,6 +29,11 @@ new class extends Component
     // Step 3
     public string $notes = '';
     public $document = null;
+
+    public function mount(): void
+    {
+        $this->borrow_date = now()->format('Y-m-d');
+    }
 
     public function with(): array
 {
@@ -199,7 +199,7 @@ new class extends Component
 
     <div>
         <x-input-label for="purpose" value="Keperluan / Tujuan Peminjaman" />
-        <input type="text" id="purpose" wire:model="purpose" placeholder="Contoh: Kegiatan lapangan, siaga bencana, dll" class="mt-1 block w-full rounded-control border-border text-sm">
+        <input type="text" id="purpose" wire:model="purpose" placeholder="Contoh: Kegiatan lapangan, siaga bencana, dll" class="mt-1block w-full rounded-control border-border text-sm">
     </div>
 </div>
 

@@ -17,12 +17,14 @@ new class extends Component
 
     public array $conditions = [];
     public array $conditionNotes = [];
+    public string $return_date = '';
     public string $notes = '';
     public $documentation = null;
 
     public function mount(int $transactionId): void
     {
         $this->transactionId = $transactionId;
+        $this->return_date = now()->format('Y-m-d');
 
         $transaction = BorrowTransaction::with('items')->findOrFail($transactionId);
 
@@ -43,6 +45,7 @@ new class extends Component
     public function submit(): void
     {
         $this->validate([
+        'return_date' => 'required|date|after_or_equal:' . BorrowTransaction::find($this->transactionId)?->borrow_date?->format('Y-m-d'),
         'documentation' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:5120',
     ]);
 
@@ -50,8 +53,9 @@ new class extends Component
 
         $diskominfo = Location::firstOrCreate(['name' => 'DISKOMINFO']);
 
-        $isLate = \Carbon\Carbon::parse($transaction->due_date)->isPast();
-
+        $isLate = $transaction->due_date
+            ? \Carbon\Carbon::parse($this->return_date)->gt(\Carbon\Carbon::parse($transaction->due_date))
+            : false;
         $documentationPath = null;
 if ($this->documentation) {
     $documentationPath = $this->documentation->store('return-documents', 'public');
@@ -59,7 +63,7 @@ if ($this->documentation) {
 
 $returnTransaction = ReturnTransaction::create([
     'borrow_transaction_id' => $transaction->id,
-    'return_date' => now(),
+    'return_date' => $this->return_date,
     'notes' => $this->notes,
     'documentation_url' => $documentationPath,
     'is_late' => $isLate,
