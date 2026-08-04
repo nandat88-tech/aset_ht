@@ -16,10 +16,16 @@ new class extends Component
 
     // Step 1
     public ?int $employee_id = null;
+    public string $borrow_date = '';
     public string $due_date = '';
     public ?int $destination_location_id = null;
     public string $purpose = '';
     public string $loan_type = 'sementara';
+
+    public function mount(): void
+    {
+        $this->borrow_date = now()->format('Y-m-d');
+    }
 
     // Step 2
     public array $selectedHt = [];
@@ -43,8 +49,9 @@ new class extends Component
 {
     $this->validate([
         'employee_id' => 'required|exists:employees,id',
+        'borrow_date' => 'required|date',
         'destination_location_id' => 'required|exists:locations,id',
-        'due_date' => $this->loan_type === 'sementara' ? 'required|date|after_or_equal:today' : 'nullable',
+        'due_date' => $this->loan_type === 'sementara' ? 'required|date|after_or_equal:borrow_date' : 'nullable',
     ]);
 
     $this->step = 2;
@@ -80,7 +87,7 @@ new class extends Component
         'employee_id' => $this->employee_id,
         'destination_location_id' => $this->destination_location_id,
         'loan_type' => $this->loan_type,
-        'borrow_date' => now(),
+        'borrow_date' => $this->borrow_date,
         'due_date' => $this->loan_type === 'sementara' ? $this->due_date : null,
         'notes' => $this->notes,
         'purpose' => $this->purpose,
@@ -103,6 +110,7 @@ new class extends Component
 
     session()->flash('message', 'Peminjaman berhasil dicatat.');
     $this->reset(['step', 'employee_id', 'due_date', 'destination_location_id', 'purpose', 'loan_type', 'selectedHt', 'selectedCharger', 'notes', 'document']);;
+    $this->borrow_date = now()->format('Y-m-d');
     $this->step = 1;
 }
 }; ?>
@@ -137,6 +145,13 @@ new class extends Component
             <h2 class="text-lg font-semibold mb-4">1. Info Peminjam</h2>
 
             <div class="space-y-4">
+    <div>
+        <x-input-label for="borrow_date" value="Tanggal Peminjaman" />
+        <input type="date" id="borrow_date" wire:model="borrow_date" class="mt-1 block w-full rounded-control border-border text-sm">
+        <x-input-error :messages="$errors->get('borrow_date')" class="mt-1" />
+        <p class="text-xs text-text-secondary mt-1">Bisa diisi tanggal lampau untuk mencatat data peminjaman lama.</p>
+    </div>
+
     <div>
         <x-input-label for="employee_id" value="Peminjam" />
         <select id="employee_id" wire:model="employee_id" class="mt-1 block w-full rounded-control border-border text-sm">
