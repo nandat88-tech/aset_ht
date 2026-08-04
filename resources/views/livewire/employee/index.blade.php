@@ -78,7 +78,7 @@ new class extends Component
     @endif
 
     <div class="flex items-center justify-between mb-4">
-        <input type="text" wire:model.live.debounce.300ms="search" placeholder="Cari nama, OPD..." class="w-72 rounded-control border-border text-sm">
+        <input type="text" wire:model.live.debounce.300ms="search" placeholder="Cari nama, instansi..." class="w-72 rounded-control border-border text-sm">
         <button wire:click="openModal" class="bg-primary text-white text-sm px-4 py-2 rounded-control hover:bg-primary-dark">
             + Tambah Pegawai
         </button>
@@ -89,7 +89,7 @@ new class extends Component
             <thead class="bg-gray-50 text-text-secondary uppercase text-xs">
                 <tr>
                     <th class="text-left px-4 py-3">Nama</th>
-                    <th class="text-left px-4 py-3">OPD / Departemen</th>
+                    <th class="text-left px-4 py-3">Instansi</th>
                     <th class="text-left px-4 py-3">No. HP/WA</th>
                     <th class="text-left px-4 py-3">Aksi</th>
                 </tr>
@@ -129,8 +129,8 @@ new class extends Component
                             <x-text-input id="name" wire:model="name" class="mt-1 block w-full" />
                             <x-input-error :messages="$errors->get('name')" class="mt-1" />
                         </div>
-                        <div>
-                            <x-input-label for="department" value="OPD / Departemen" />
+                        <<div>
+                            <x-input-label for="department" value="Instansi" />
                             <x-text-input id="department" wire:model="department" class="mt-1 block w-full" />
                             <x-input-error :messages="$errors->get('department')" class="mt-1" />
                         </div>

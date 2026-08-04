@@ -25,7 +25,7 @@ new class extends Component
             <thead class="bg-gray-50 text-text-secondary uppercase text-xs">
                 <tr>
                     <th class="text-left px-4 py-3">Peminjam</th>
-                    <th class="text-left px-4 py-3">Departemen</th>
+                    <th class="text-left px-4 py-3">Instansi</th>
                     <th class="text-left px-4 py-3">Tanggal Pinjam</th>
                     <th class="text-left px-4 py-3">Jatuh Tempo</th>
                     <th class="text-left px-4 py-3">Jumlah Unit</th>

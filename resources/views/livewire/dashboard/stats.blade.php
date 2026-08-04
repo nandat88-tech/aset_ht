@@ -111,7 +111,7 @@ new class extends Component
                     'id' => $trx->id,
                     'employee' => $trx->employee?->name ?? '-',
                     'units' => $units ?: '-',
-                    'daysLate' => now()->diffInDays($trx->due_date),
+                    'daysLate' => (int) floor(abs(\Carbon\Carbon::parse($trx->due_date)->diffInDays(now()))),
                 ];
             });
     }
