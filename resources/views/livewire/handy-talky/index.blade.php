@@ -4,6 +4,7 @@ use App\Models\HandyTalky;
 use App\Models\Location;
 use Livewire\Volt\Component;
 use Livewire\WithPagination;
+use Livewire\Attributes\Url;
 
 new class extends Component
 {
@@ -12,6 +13,9 @@ new class extends Component
     public string $search = '';
     public bool $showModal = false;
     public ?int $editingId = null;
+
+    #[Url(as: 'location')]
+    public ?string $locationFilter = null;
 
 
     // Field-field form
@@ -31,10 +35,23 @@ new class extends Component
                         ->orWhere('inventory_number', 'like', '%' . $this->search . '%')
                         ->orWhere('brand', 'like', '%' . $this->search . '%');
                 })
+                ->when($this->locationFilter, function ($query) {
+                    if ($this->locationFilter === '__none__') {
+                        $query->whereNull('location_id');
+                    } else {
+                        $query->whereHas('location', fn ($q) => $q->where('name', $this->locationFilter));
+                    }
+                })
                 ->latest()
                 ->paginate(10),
             'locations' => Location::orderBy('name')->get(),
         ];
+    }
+
+    public function clearLocationFilter(): void
+    {
+        $this->locationFilter = null;
+        $this->resetPage();
     }
 
     public function openModal(): void
@@ -113,13 +130,21 @@ public function markAsRepaired(int $id): void
         </div>
     @endif
 
-    <div class="flex items-center justify-between mb-4">
-        <input
-            type="text"
-            wire:model.live.debounce.300ms="search"
-            placeholder="Cari nomor seri, merk..."
-            class="w-72 rounded-control border-border text-sm"
-        >
+    <div class="flex items-center justify-between mb-4 flex-wrap gap-3">
+        <div class="flex items-center gap-3 flex-wrap">
+            <input
+                type="text"
+                wire:model.live.debounce.300ms="search"
+                placeholder="Cari nomor seri, merk..."
+                class="w-72 rounded-control border-border text-sm"
+            >
+            @if ($locationFilter)
+                <span class="inline-flex items-center gap-2 bg-primary-light text-primary text-xs font-medium px-3 py-1.5 rounded-full">
+                    Lokasi: {{ $locationFilter === '__none__' ? 'Tanpa Lokasi' : $locationFilter }}
+                    <button wire:click="clearLocationFilter" class="hover:text-primary-dark font-bold">✕</button>
+                </span>
+            @endif
+        </div>
         @if (!auth()->user()->isViewer())
     @if (auth()->user()->canEditData())
     <button wire:click="openModal" class="bg-primary text-white text-sm px-4 py-2 rounded-control hover:bg-primary-dark">
