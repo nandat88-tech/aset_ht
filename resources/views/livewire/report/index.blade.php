@@ -133,7 +133,8 @@ new class extends Component
                     <th class="text-left px-4 py-3">Keperluan</th>
                     <th class="text-left px-4 py-3">Tgl Pinjam</th>
                     <th class="text-left px-4 py-3">Jatuh Tempo</th>
-                    <th class="text-left px-4 py-3">Jumlah Unit</th>
+                    <th class="text-left px-4 py-3">Jumlah HT</th>
+                    <th class="text-left px-4 py-3">Jumlah Charger</th>
                     <th class="text-left px-4 py-3">Status</th>
                     <th class="text-left px-4 py-3">Dokumen</th>
                 </tr>
@@ -147,7 +148,8 @@ new class extends Component
                         <td class="px-4 py-3">{{ $trx->purpose ?? '-' }}</td>
                         <td class="px-4 py-3">{{ \Carbon\Carbon::parse($trx->borrow_date)->format('d M Y') }}</td>
                         <td class="px-4 py-3">{{ \Carbon\Carbon::parse($trx->due_date)->format('d M Y') }}</td>
-                        <td class="px-4 py-3">{{ $trx->items->count() }} unit</td>
+                        <td class="px-4 py-3">{{ $trx->items->whereNotNull('handy_talky_id')->count() }} unit</td>
+                        <td class="px-4 py-3">{{ $trx->items->whereNotNull('charger_id')->count() }} unit</td>
                         <td class="px-4 py-3">
                             <span class="badge {{ $trx->status === 'active' ? 'badge-info' : ($trx->status === 'returned_late' ? 'badge-danger' : 'badge-success') }}">
                                 {{ ['active' => 'Dipinjam', 'returned' => 'Selesai', 'returned_late' => 'Terlambat'][$trx->status] ?? $trx->status }}
@@ -167,7 +169,7 @@ new class extends Component
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="8" class="px-4 py-6 text-center text-text-secondary">
+                            <td colspan="9" class="px-4 py-6 text-center text-text-secondary">
                             Tidak ada data untuk filter ini.
                         </td>
                     </tr>

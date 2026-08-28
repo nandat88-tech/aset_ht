@@ -32,15 +32,13 @@ class BorrowReportExport implements FromCollection, WithHeadings, WithMapping
         return $query->latest('borrow_date')->get();
     }
 
-    public function headings(): array
+        public function headings(): array
     {
-        return ['Peminjam', 'Departemen', 'Lokasi Tujuan', 'Keperluan', 'Tanggal Pinjam', 'Jatuh Tempo', 'Jumlah Unit', 'Status'];
+        return ['Peminjam', 'Departemen', 'Lokasi Tujuan', 'Keperluan', 'Tanggal Pinjam', 'Jatuh Tempo', 'Jumlah HT', 'Jumlah Charger', 'Status'];
     }
-
     public function map($trx): array
     {
         $statusLabel = ['active' => 'Dipinjam', 'returned' => 'Selesai', 'returned_late' => 'Terlambat'][$trx->status] ?? $trx->status;
-
         return [
             $trx->employee->name,
             $trx->employee->department,
@@ -48,7 +46,8 @@ class BorrowReportExport implements FromCollection, WithHeadings, WithMapping
             $trx->purpose ?? '-',
             \Carbon\Carbon::parse($trx->borrow_date)->format('d-m-Y'),
             \Carbon\Carbon::parse($trx->due_date)->format('d-m-Y'),
-            $trx->items->count(),
+            $trx->items->whereNotNull('handy_talky_id')->count(),
+            $trx->items->whereNotNull('charger_id')->count(),
             $statusLabel,
         ];
     }
